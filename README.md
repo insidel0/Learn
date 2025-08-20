@@ -2,10 +2,10 @@
 
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Build Status](https://github.com/<your-username>/<your-repo>/actions/workflows/ci.yml/badge.svg)](https://github.com/<your-username>/<your-repo>/actions)
-[![Issues](https://img.shields.io/github/issues/<your-username>/<your-repo>)](https://github.com/<your-username>/<your-repo>/issues)
-[![Pull Requests](https://img.shields.io/github/issues-pr/<your-username>/<your-repo>)](https://github.com/<your-username>/<your-repo>/pulls)
-[![Contributors](https://img.shields.io/github/contributors/<your-username>/<your-repo>)](https://github.com/<your-username>/<your-repo>/graphs/contributors)
+[![Build Status](https://github.com/insidel0/Learn/actions/workflows/ci.yml/badge.svg)](https://github.com/insidel0/Learn/actions)
+[![Issues](https://img.shields.io/github/issues/insidel0/Learn)](https://github.com/insidel0/Learn/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/insidel0/Learn)](https://github.com/insidel0/Learn/pulls)
+[![Contributors](https://img.shields.io/github/contributors/insidel0/Learn)](https://github.com/insidel0/Learn/graphs/contributors)
 
 ---
 
