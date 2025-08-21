@@ -1,4 +1,4 @@
 pypdf==4.2.0
 pytest==8.2.0
 python-dotenv==1.0.1
-
+black==24.8.0
