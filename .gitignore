@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Projekt
+*.db
+.pytest_cache/
+data/*
+!data/.gitkeep
