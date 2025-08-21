@@ -11,7 +11,7 @@
 
 ## About
 
-**LearnCards** is an AI-powered learning tool that transforms your documents into smart flashcards.  
+**Learn** is an AI-powered learning tool that transforms your documents into smart flashcards.  
 Upload PDFs or text, and the app automatically generates Q/A cards with the help of LLMs.  
 A built-in spaced repetition algorithm (similar to Anki's SM-2) ensures efficient long-term retention,  
 while an integrated Pomodoro timer keeps you focused during study sessions.
