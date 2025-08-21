@@ -1,6 +1,6 @@
-import sqlite3
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable, Optional
+import sqlite3
 
 SCHEMA = """
 PRAGMA journal_mode=WAL;
@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS reviews(
 );
 """
 
+
 class Store:
     def __init__(self, db_path: str | Path = "learn.db"):
         self.db_path = str(db_path)
@@ -32,8 +33,7 @@ class Store:
         with sqlite3.connect(self.db_path) as c:
             c.executescript(SCHEMA)
 
-    # ---------- Cards ----------
-    def add_cards(self, cards: Iterable[tuple[str, str, Optional[str]]]) -> int:
+    def add_cards(self, cards: Iterable[tuple[str, str, str | None]]) -> int:
         """cards: iterable of (question, answer, source_ref)"""
         with sqlite3.connect(self.db_path) as c:
             cur = c.executemany(
@@ -43,9 +43,6 @@ class Store:
             return cur.rowcount or 0
 
     def get_due_cards(self, now_iso: str) -> list[tuple[int, str, str]]:
-        """
-        Return cards that are due now (or never reviewed).
-        """
         q = """
         SELECT id, question, answer FROM cards
         WHERE id NOT IN (SELECT DISTINCT card_id FROM reviews)
@@ -59,11 +56,7 @@ class Store:
         with sqlite3.connect(self.db_path) as c:
             return c.execute(q, (now_iso,)).fetchall()
 
-    # ---------- Reviews ----------
     def get_last_state(self, card_id: int) -> tuple[int, float] | None:
-        """
-        Returns (interval, ease) of the last review for a card, or None.
-        """
         q = """
         SELECT interval, ease
         FROM reviews
@@ -75,9 +68,20 @@ class Store:
             row = c.execute(q, (card_id,)).fetchone()
             return (row[0], row[1]) if row else None
 
-    def add_review(self, card_id: int, quality: int, interval: int, ease: float, next_due_iso: str) -> None:
+    def add_review(
+        self,
+        card_id: int,
+        quality: int,
+        interval: int,
+        ease: float,
+        next_due_iso: str,
+    ) -> None:
         with sqlite3.connect(self.db_path) as c:
             c.execute(
-                "INSERT INTO reviews(card_id, quality, interval, ease, next_due_at) VALUES(?,?,?,?,?)",
+                (
+                    "INSERT INTO reviews("
+                    "card_id, quality, interval, ease, next_due_at"
+                    ") VALUES(?,?,?,?,?)"
+                ),
                 (card_id, quality, interval, ease, next_due_iso),
             )

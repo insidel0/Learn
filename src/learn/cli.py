@@ -1,9 +1,13 @@
 import argparse
-from datetime import datetime, timezone
-from src.learn.pdf_ingest import extract
-from src.learn.card_gen import from_text
-from src.learn.store import Store
-from src.learn.srs import review, SRSState
+from datetime import datetime
+
+from learn.card_gen import from_text
+from learn.pdf_ingest import extract
+from learn.srs import SRSState, review
+from learn.store import Store
+
+QUALITY_MAX = 5
+
 
 def cmd_ingest(args):
     text = extract(args.input)
@@ -11,9 +15,10 @@ def cmd_ingest(args):
     inserted = Store(args.db).add_cards(cards)
     print(f"Inserted {inserted} cards into {args.db}")
 
+
 def cmd_review(args):
     s = Store(args.db)
-    now_iso = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    now_iso = datetime.now(datetime.UTC).replace(microsecond=0).isoformat()
     due = s.get_due_cards(now_iso)
     if not due:
         print("No cards due. 🎉")
@@ -25,17 +30,17 @@ def cmd_review(args):
         while True:
             try:
                 qual = int(input("Quality 0-5: "))
-                if 0 <= qual <= 5:
+                if 0 <= qual <= QUALITY_MAX:
                     break
             except ValueError:
                 pass
 
-        # 🔽 Persisted SRS state usage (the bit you asked for)
         last = s.get_last_state(card_id)
         state = SRSState(interval=last[0], ease=last[1], reps=1) if last else SRSState()
         new_state, next_due = review(state, qual)
         s.add_review(card_id, qual, new_state.interval, new_state.ease, next_due)
         print(f"Next due in {new_state.interval} day(s) @ {next_due}")
+
 
 def main():
     p = argparse.ArgumentParser(prog="learn")
@@ -51,6 +56,7 @@ def main():
 
     args = p.parse_args()
     args.func(args)
+
 
 if __name__ == "__main__":
     main()

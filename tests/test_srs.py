@@ -1,4 +1,5 @@
-from src.learn.srs import SRSState, review
+from learn.srs import review
+
 
 def test_srs_progression():
     st, _ = review(None, 4)
