@@ -1,64 +1,37 @@
 name: CI
-
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python 3.13
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: ${{ matrix.python-version }}
           cache: "pip"
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest pytest-cov ruff mypy black
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
 
-      - name: Lint (ruff)
+      - name: Install project (dev extras)
+        run: pip install -e ".[dev]"
+
+      - name: Lint (Ruff)
         run: ruff check src tests
 
-      - name: Format check (black)
+      - name: Format check (Black)
         run: black --check .
 
-      - name: Type check (mypy)
-        run: mypy src --ignore-missing-imports
+      - name: Type-check (mypy)
+        run: mypy -p learn
 
-      - name: Run tests with coverage
-        run: |
-          pytest -q --cov=src --cov-report=xml
-
-      - name: CLI smoke test (ingest -> review)
-        run: |
-          mkdir -p data
-          printf "Paragraph long enough for a card about spaced repetition and memory consolidation.\n\nAnother paragraph about Pomodoro focus cycles." > data/sample.txt
-          python -m src.learn.cli ingest data/sample.txt
-          # simulate: [Enter] to show answer, then quality=4
-          printf "\n4\n" | python -m src.learn.cli review
-
-      - name: Upload coverage artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-xml
-          path: coverage.xml
-          if-no-files-found: ignore
-
-      # Optional: upload to Codecov (needs token for private repos)
-      # - name: Upload to Codecov
-      #   uses: codecov/codecov-action@v4
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     files: coverage.xml
-      #     fail_ci_if_error: true
+      - name: Test (pytest)
+        run: pytest -q

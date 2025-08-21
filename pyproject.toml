@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "learn"
+version = "0.1.0"
+description = "Generate flashcards from documents with Anki-style SRS + Pomodoro."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "pypdf==4.2.0",
+  "python-dotenv==1.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==8.2.0",
+  "black==24.8.0",
+  "ruff",
+  "mypy",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["learn"]
+
+[tool.setuptools.package-data]
+learn = ["py.typed"]  # ensure you have src/learn/py.typed (can be an empty file)
+
+[tool.black]
+line-length = 88
+target-version = ["py311","py312","py313"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+mypy_path = "src"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
