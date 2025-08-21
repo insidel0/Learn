@@ -56,6 +56,7 @@ status:  # compare local vs remote (ahead/behind)
 	@git fetch -q origin
 	@echo "Branch: $$(git branch --show-current)"
 	@git --no-pager status -sb
-	@echo -n "Ahead/behind: "; git rev-list --left-right --count @{u}...HEAD
+	@printf "Ahead/behind: "
+	@git rev-list --left-right --count @{u}...HEAD
 	@echo "Not pushed yet:"; git --no-pager log --oneline @{u}..HEAD || true
 	@echo "Missing locally:"; git --no-pager log --oneline HEAD..@{u} || true
