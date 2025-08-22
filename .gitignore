@@ -14,7 +14,7 @@ __pycache__/
 # Build / packaging
 build/
 dist/
-*.egg-info/
+*.learn.egg-info/
 *.egg
 .eggs/
 wheels/
