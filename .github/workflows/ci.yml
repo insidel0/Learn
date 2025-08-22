@@ -37,4 +37,4 @@ jobs:
         run: learn --help
 
       - name: Test (pytest)
-              run: pytest -q
+        run: pytest -q
