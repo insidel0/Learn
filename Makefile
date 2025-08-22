@@ -2,54 +2,84 @@
 
 SHELL := /bin/bash
 
-PY ?= python
-PIP ?= $(PY) -m pip
+# ---------- Find a suitable Python (3.13 -> 3.12 -> 3.11), unless PY is provided ----------
+ifeq ($(origin PY), undefined)
+  PY := $(shell command -v python3.13 2>/dev/null)
+  ifeq ($(PY),)
+    PY := $(shell command -v python3.12 2>/dev/null)
+  endif
+  ifeq ($(PY),)
+    PY := $(shell command -v python3.11 2>/dev/null)
+  endif
+  ifeq ($(PY),)
+    # Last resorts
+    PY := $(shell command -v python3 2>/dev/null)
+  endif
+  ifeq ($(PY),)
+    PY := $(shell command -v python 2>/dev/null)
+  endif
+endif
+
+PIP := $(PY) -m pip
 BRANCH ?= main
 DB ?= learn.db
 
-# Make "learn" importable without installing the package
+# Make "learn" importable during dev even before install
 export PYTHONPATH := src
 
 .PHONY: help install test run ingest fmt lint clean typecheck ship smoke status \
-        login _ensure-ssh-dir _ensure-key _known-hosts _ensure-agent _add-key _upload-key _test-ssh
+        pyver which-python login _ensure-ssh-dir _ensure-key _known-hosts _ensure-agent _add-key _upload-key _test-ssh
 
 help:        # show available targets
 	@grep -E '^[a-zA-Z0-9_-]+:.*?#' Makefile | awk 'BEGIN {FS=":.*?# "}; {printf "\033[36m%-12s\033[0m %s\n", $$1, $$2}'
 
-install:     # install dependencies
-	$(PIP) install -r requirements.txt
+which-python:  # show which Python the Makefile is using
+	@echo "PY = $(PY)"
+	@$(PY) -c 'import sys,platform; print("Version:", platform.python_version()); print("Executable:", sys.executable)'
 
-lint:        # lint (ruff)
+# ---------- Python version guard (3.11+) ----------
+pyver:  # ensure Python >= 3.11
+	@$(PY) -c "import sys,platform; req=(3,11); cur=sys.version_info[:2]; \
+		sys.exit(f'ERROR: Python {req[0]}.{req[1]}+ required, found {cur[0]}.{cur[1]}') if cur<req else \
+		print(f'OK: Python {platform.python_version()}')"
+
+install: pyver     # install from pyproject (editable + dev extras)
+	@echo ">> Upgrading pip"
+	@$(PIP) install --upgrade pip
+	@echo ">> Installing editable package with dev extras from pyproject.toml"
+	@$(PIP) install -e ".[dev]"
+
+lint: pyver        # lint (ruff)
 	ruff check src tests
 
-fmt:         # format (ruff or black)
-	ruff format .
-	# black .  # uncomment if you prefer Black instead of Ruff formatter
+fmt: pyver         # format (Black + Ruff autofix for imports, etc.)
+	ruff check --fix src tests
+	black .
 
-typecheck:   # mypy on package (uses mypy.ini or pyproject)
+typecheck: pyver   # mypy on package (uses pyproject)
 	mypy -p learn
 
-test:        # run tests
+test: pyver        # run tests
 	pytest -q
 
-run:         # review due cards (CLI)
+run: pyver         # review due cards (CLI)
 	$(PY) -m learn.cli review
 
-ingest:      # create cards from a file: make ingest FILE=data/sample.txt
+ingest: pyver      # create cards from a file: make ingest FILE=data/sample.txt
 	@test -n "$(FILE)" || (echo "Set FILE=path/to/input"; exit 1)
 	$(PY) -m learn.cli ingest $(FILE)
 
-smoke:       # non-interactive CLI smoke test
+smoke: pyver       # non-interactive CLI smoke test
 	mkdir -p data
 	printf "Long paragraph about spaced repetition etc.\n\nAnother paragraph about Pomodoro." > data/sample.txt
 	$(PY) -m learn.cli ingest data/sample.txt
 	printf "\n4\n" | $(PY) -m learn.cli review
 
-clean:       # remove caches and DB
+clean:             # remove caches and DB
 	rm -rf .pytest_cache .mypy_cache .ruff_cache __pycache__ */__pycache__
 	rm -f $(DB) coverage.xml
 
-ship: lint typecheck test  # run all checks, then commit & push
+ship: pyver lint typecheck test  # run all checks, then commit & push
 	@test -n "$(MSG)" || (echo "Usage: make ship MSG='your message'"; exit 1)
 	git add -A
 	-git commit -m "$(MSG)"
