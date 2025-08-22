@@ -15,15 +15,15 @@ dependencies = [
 
 [project.optional-dependencies]
 
-[project.scripts]
-learn = "learn.cli:main"
-
 dev = [
   "pytest==8.2.0",
   "black==24.8.0",
   "ruff",
   "mypy",
 ]
+
+[project.scripts]
+learn = "learn.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
