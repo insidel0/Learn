@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Callable, Sequence
 from datetime import datetime, timezone
-from typing import Callable, Optional, Sequence, cast
+from typing import cast
 
 from learn.card_gen import from_text
 from learn.pdf_ingest import extract
@@ -67,8 +68,8 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     p = build_parser()
     args = p.parse_args(list(argv) if argv is not None else None)
-    func: Optional[Callable[[argparse.Namespace], int]] = cast(
-        Optional[Callable[[argparse.Namespace], int]],
+    func: Callable[[argparse.Namespace], int] | None = cast(
+        Callable[[argparse.Namespace], int] | None,
         getattr(args, "func", None),
     )
     if func is None:
