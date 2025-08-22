@@ -7,13 +7,17 @@ name = "learn"
 version = "0.1.0"
 description = "Generate flashcards from documents with Anki-style SRS + Pomodoro."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
   "pypdf==4.2.0",
   "python-dotenv==1.0.1",
 ]
 
 [project.optional-dependencies]
+
+[project.scripts]
+learn = "learn.cli:main"
+
 dev = [
   "pytest==8.2.0",
   "black==24.8.0",

@@ -1,6 +1,6 @@
 # Learn
 
-[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/release/python-3110/)
+[![Python](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/release/python-3120/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Build Status](https://github.com/insidel0/Learn/actions/workflows/ci.yml/badge.svg)](https://github.com/insidel0/Learn/actions)
 [![Issues](https://img.shields.io/github/issues/insidel0/Learn)](https://github.com/insidel0/Learn/issues)
