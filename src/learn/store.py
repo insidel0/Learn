@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections.abc import Iterable
 from pathlib import Path
 import sqlite3
@@ -27,7 +29,7 @@ CREATE TABLE IF NOT EXISTS reviews(
 
 
 class Store:
-    def __init__(self, db_path: str | Path = "learn.db"):
+    def __init__(self, db_path: str | Path = "learn.db") -> None:
         self.db_path = str(db_path)
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         with sqlite3.connect(self.db_path) as c:

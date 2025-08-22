@@ -23,22 +23,49 @@ dev = [
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-packages = ["learn"]
+
+# Either keep explicit list:
+# packages = ["learn"]
+# ...or use discovery (recommended), which also catches subpackages like learn.something:
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["learn*"]
 
 [tool.setuptools.package-data]
-learn = ["py.typed"]  # ensure you have src/learn/py.typed (can be an empty file)
+learn = ["py.typed"]
 
 [tool.black]
-line-length = 88
-target-version = ["py311","py312","py313"]
+line-length = 100
+target-version = ["py311", "py312", "py313"]
 
 [tool.ruff]
-line-length = 88
+line-length = 100
+target-version = "py313"
+src = ["src"]
+extend-exclude = ["data", ".venv", "build", "dist"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "PL"]
+ignore = ["UP017"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["PLR2004"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-sort-within-sections = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 [tool.mypy]
 python_version = "3.13"
-strict = true
 mypy_path = "src"
+explicit_package_bases = true
+ignore_missing_imports = true
+strict = true
+exclude = '^(\.venv/|data/|build/|dist/|\.mypy_cache/|\.ruff_cache/|\.pytest_cache/)'
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

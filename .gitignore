@@ -1,14 +1,59 @@
-# macOS
-.DS_Store
-
-# Python
+# Byte-compiled / cache
 __pycache__/
-*.pyc
-.venv/
-.env
-
-# Projekt
-*.db
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.dylib
+*.dll
+.mypy_cache/
+.ruff_cache/
 .pytest_cache/
+.ipynb_checkpoints/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+wheels/
+pip-wheel-metadata/
+
+# Virtual envs / tooling
+.venv/
+venv/
+env/
+.conda/
+.python-version
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Local databases / state
+*.db
+*.sqlite3
+learn.db
+
+# App data (keep tiny fixtures only)
 data/*
 !data/.gitkeep
+!data/sample.txt
+
+# Misc
+.env
+.env.*
+*.bak
+*.swp
+*.swo

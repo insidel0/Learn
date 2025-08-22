@@ -23,11 +23,7 @@ def now_utc_iso() -> str:
 
 
 def add_days_iso(days: int) -> str:
-    return (
-        (datetime.now(timezone.utc) + timedelta(days=days))
-        .replace(microsecond=0)
-        .isoformat()
-    )
+    return (datetime.now(timezone.utc) + timedelta(days=days)).replace(microsecond=0).isoformat()
 
 
 def review(state: SRSState | None, quality: int) -> tuple[SRSState, str]:
